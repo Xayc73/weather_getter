@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  nats:
+    image: nats:2.11
+    command: -js -sd /data
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats-data:/data
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: display_development
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  display:
+    build:
+      context: ./display
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - db
+      - nats
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/display_development
+      NATS_URL: nats://nats:4222
+      DEFAULT_CITIES: "Москва,Санкт-Петербург"
+      RAILS_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./display:/app
+
+  fetcher:
+    build:
+      context: ./fetcher
+      dockerfile: Dockerfile
+    depends_on:
+      - nats
+    environment:
+      NATS_URL: nats://nats:4222
+    volumes:
+      - ./fetcher/config:/app/config:ro
+
+volumes:
+  nats-data:
+  pg-data:
+
+
+
+

@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+ruby '~> 3.4'
+
+gem 'http'
+gem 'json'
+gem 'nats-pure', require: 'nats/io'
+gem 'rufus-scheduler'
+
+group :test do
+  gem 'rspec'
+end

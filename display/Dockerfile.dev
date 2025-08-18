@@ -20,7 +20,7 @@ COPY . $RAILS_ROOT
 
 RUN bundle install
 
-COPY entrypoint.sh /usr/bin/entrypoint.sh
+COPY docker/entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
 
 EXPOSE 3000

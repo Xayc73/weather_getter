@@ -1,0 +1,19 @@
+plugins: rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Max: 5
+RSpec/ExampleLength:
+  Max: 10
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+Metrics/MethodLength:
+  Max: 12
+Style/Documentation:
+  Enabled: false
+
+
+
+
+
+
+

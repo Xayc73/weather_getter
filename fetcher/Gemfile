@@ -1,12 +1,21 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 ruby '~> 3.4'
 
-gem 'http'
-gem 'json'
-gem 'nats-pure', require: 'nats/io'
+gem 'faraday'
+gem 'faraday-retry'
+gem 'faraday-typhoeus'
+gem 'nats-pure', require: 'nats/client'
+gem 'oj'
 gem 'rufus-scheduler'
+gem 'sentry-ruby'
 
 group :test do
   gem 'rspec'
+  gem 'rubocop-rspec', require: false
+  gem 'simplecov', require: false
+  gem 'simplecov_json_formatter', require: false
+  gem 'webmock'
 end

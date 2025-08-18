@@ -1,10 +1,10 @@
 // For format details, see https://containers.dev/implementors/json_reference/.
 // For config options, see the README at: https://github.com/devcontainers/templates/tree/main/src/ruby
 {
-  "name": "display_app",
+  "name": "fetcher_app",
   "dockerComposeFile": "../../docker-compose.yml",
-  "service": "display",
-  "runServices": ["display"],
+  "service": "fetcher",
+  "runServices": ["fetcher"],
   "workspaceFolder": "/app",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
@@ -20,9 +20,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "streetsidesoftware.code-spell-checker", // правописание слов, чтобы не допускать описок
         "eamodio.gitlens", // история гита, удобно изучать
-        "jsrn.rails-test-assistant", // запуск теста по комбинации клавиш с места где курсор, удобно
         "shopify.ruby-lsp", // индексирование и переход по классам на Cmd + Click
         "misogi.ruby-rubocop" // подсветка рубокопа, чтобы сразу видеть где несоблюдение style guide
       ]

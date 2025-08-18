@@ -37,21 +37,25 @@ services:
       - "3000:3000"
     volumes:
       - ./display:/app
+      - display_bundle:/usr/local/bundle:delegated
 
   fetcher:
     build:
       context: ./fetcher
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     depends_on:
       - nats
     environment:
       NATS_URL: nats://nats:4222
     volumes:
-      - ./fetcher/config:/app/config:ro
+      - ./fetcher:/app
+      - fetcher_bundle:/usr/local/bundle:delegated
 
 volumes:
   nats-data:
   pg-data:
+  display_bundle:
+  fetcher_bundle:
 
 
 

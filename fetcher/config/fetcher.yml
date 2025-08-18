@@ -1,0 +1,14 @@
+provider: open_meteo
+providers:
+  open_meteo: {}
+  open_weather:
+    api_key: "" # or leave blank and set ENV OPENWEATHER_API_KEY
+
+storage:
+  adapter: nats_kv
+  nats_kv:
+    bucket: weather
+
+
+
+

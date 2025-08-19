@@ -20,7 +20,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "streetsidesoftware.code-spell-checker", // правописание слов, чтобы не допускать описок
         "eamodio.gitlens", // история гита, удобно изучать
         "jsrn.rails-test-assistant", // запуск теста по комбинации клавиш с места где курсор, удобно
         "shopify.ruby-lsp", // индексирование и переход по классам на Cmd + Click

@@ -1,9 +1,8 @@
-require 'nats/io'
+require "nats/client"
 
 class NatsClient
   def initialize(url)
-    @nc = NATS::IO::Client.new
-    @nc.connect(url: url, max_reconnect_attempts: -1)
+    @nc = NATS.connect(url)
     @js = @nc.jetstream
   end
 
@@ -12,7 +11,7 @@ class NatsClient
     kv = @js.key_value(bucket)
     entry = begin
       kv.get(key)
-    rescue StandardError
+    rescue NATS::KeyValue::KeyNotFoundError, NATS::JetStream::Error, NATS::Error
       nil
     end
     entry && entry.value
@@ -26,9 +25,7 @@ class NatsClient
 
   def ensure_kv(bucket)
     @js.key_value(bucket)
-  rescue NATS::IO::NoRespondersError, NATS::IO::Error
+  rescue StandardError
     @js.create_key_value(bucket: bucket)
   end
 end
-
-

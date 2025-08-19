@@ -15,7 +15,9 @@
             <tbody>
               <% @temperatures_by_city[city].each do |ts, temp| %>
                 <tr class="border-b">
-                  <td class="py-1 pr-4"><%= ts.strftime('%H:%M') %></td>
+                  <td class="py-1 pr-4">
+                    <time class="js-local-time" data-utc="<%= ts.utc.iso8601 %>"><%= ts.strftime('%H:%M') %></time>
+                  </td>
                   <td class="py-1"><%= temp.nil? ? '-' : sprintf('%.1f', temp) %></td>
                 </tr>
               <% end %>
@@ -30,3 +32,41 @@
 
 
 
+<script>
+  (function() {
+    function formatToLocalHM(date) {
+      try {
+        return new Intl.DateTimeFormat(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }).format(date);
+      } catch (_) {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      }
+    }
+
+    function applyLocalTimes(root) {
+      var elements = (root || document).querySelectorAll('time.js-local-time[data-utc]');
+      elements.forEach(function(el) {
+        var iso = el.getAttribute('data-utc');
+        if (!iso) return;
+        var d = new Date(iso);
+        if (isNaN(d)) return;
+        el.textContent = formatToLocalHM(d);
+        try { el.dateTime = d.toISOString(); } catch (_) {}
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { applyLocalTimes(); });
+    } else {
+      applyLocalTimes();
+    }
+
+    // Optional: if Turbo is present, re-apply after navigation
+    if (window.Turbo && window.addEventListener) {
+      window.addEventListener('turbo:load', function() { applyLocalTimes(); });
+    }
+  })();
+</script>

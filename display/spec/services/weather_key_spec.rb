@@ -13,5 +13,3 @@ RSpec.describe WeatherKey do
     expect(key).to eq('weather/Санкт-Петербург/2024-01-01/08:40')
   end
 end
-
-

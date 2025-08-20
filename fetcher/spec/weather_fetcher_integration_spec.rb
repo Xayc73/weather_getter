@@ -30,16 +30,15 @@ RSpec.describe WeatherFetcher do
     end
 
     shared_examples 'common provider behavior' do
-      it 'fetches temperatures and stores them with correct keys and values' do
+      it 'fetches temperatures and updates per-day aggregated key with timeslot temperatures' do
         fetch_and_store
 
         cities.each do |city|
-          key = expected_key_for(city)
-          expect(storage.data).to have_key(key)
-          payload = parse_value(storage.data[key])
-          expect(payload['city']).to eq(city)
-          expect(payload['at']).to eq(fixed_time.utc.iso8601)
-          expect(payload['temp']).to eq(expected_temp[city])
+          day_key = "weather/#{city}/2024-01-01"
+          expect(storage.data).to have_key(day_key)
+          day = parse_value(storage.data[day_key])
+          expect(day).to be_a(Hash)
+          expect(day['10:00']).to eq(expected_temp[city])
         end
       end
 

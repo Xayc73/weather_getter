@@ -1,9 +1,17 @@
 class WeatherKey
-  # Round time to 20 minute slot and build namespaced key per city
+  # Build day-level key per city. Values are time-slot -> data for that day.
   def self.key_for(city:, at:)
-    rounded = Time.at((at.to_i / (20 * 60)) * 20 * 60)
+    rounded = round_to_slot(at)
     date = rounded.utc.strftime("%Y-%m-%d")
-    time = rounded.utc.strftime("%H:%M")
-    "weather/#{city}/#{date}/#{time}"
+    "weather/#{city}/#{date}"
   end
+
+  def self.time_slot_for(at:)
+    round_to_slot(at).utc.strftime("%H:%M")
+  end
+
+  def self.round_to_slot(at)
+    Time.at((at.to_i / (20 * 60)) * 20 * 60)
+  end
+  private_class_method :round_to_slot
 end

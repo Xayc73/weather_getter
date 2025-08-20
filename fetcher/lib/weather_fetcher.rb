@@ -30,13 +30,11 @@ class WeatherFetcher
   end
 
   def fetch_and_store
+    now = Time.now
+    date, time_slot = build_time_parts(now)
+
     @cities.each do |city|
-      now = Time.now
-      temp = @provider.temperature_for(city)
-      key = key_for(city: city, at: now)
-      value = { city: city, at: now.utc.iso8601, temp: temp }.to_json
-      @storage.put(key: key, value: value)
-      puts "Stored #{city} #{temp}C at #{now}"
+      fetch_and_store_city(city: city, date: date, time_slot: time_slot, now: now)
     rescue StandardError => e
       warn "Fetch error for #{city}: #{e.class} #{e.message}"
       next
@@ -49,11 +47,40 @@ class WeatherFetcher
 
   private
 
-  def key_for(city:, at:)
-    rounded = Time.at((at.to_i / (20 * 60)) * 20 * 60)
-    date = rounded.utc.strftime('%Y-%m-%d')
-    time = rounded.utc.strftime('%H:%M')
-    "weather/#{city}/#{date}/#{time}"
+  def build_time_parts(now)
+    rounded = Time.at((now.to_i / (20 * 60)) * 20 * 60)
+    [rounded.utc.strftime('%Y-%m-%d'), rounded.utc.strftime('%H:%M')]
+  end
+
+  def fetch_and_store_city(city:, date:, time_slot:, now:)
+    temp = @provider.temperature_for(city)
+    day_key = day_key_for(city: city, date: date)
+    day_map = read_day_map(day_key)
+    day_map[time_slot] = temp
+    write_day_map(day_key, day_map)
+    puts "Stored #{city} #{temp}C at #{now}"
+  end
+
+  def day_key_for(city:, date:)
+    "weather/#{city}/#{date}"
+  end
+
+  def read_day_map(day_key)
+    existing = @storage.get(key: day_key)
+    parsed = existing ? safe_parse_json(existing) : {}
+    parsed.is_a?(Hash) ? parsed : {}
+  rescue StandardError
+    {}
+  end
+
+  def write_day_map(day_key, map)
+    @storage.put(key: day_key, value: JSON.dump(map))
+  end
+
+  def safe_parse_json(json)
+    JSON.parse(json)
+  rescue StandardError
+    nil
   end
 
   def seconds_until_next_boundary(now)

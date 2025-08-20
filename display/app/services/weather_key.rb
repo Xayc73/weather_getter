@@ -1,5 +1,5 @@
 class WeatherKey
-  TIME_SLOT_SECONDS = ENV.fetch('TIME_SLOT_SECONDS', 20 * 60).to_i
+  TIME_SLOT_SECONDS = ENV.fetch("TIME_SLOT_SECONDS", 20 * 60).to_i
 
   # Build day-level key per city. Values are time-slot -> data for that day.
   def self.key_for(city:, at:)

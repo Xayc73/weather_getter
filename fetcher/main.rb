@@ -9,34 +9,33 @@ require_relative 'lib/storage/factory'
 require_relative 'lib/weather/city_coordinates'
 require_relative 'lib/weather/coordinates_resolver'
 
-DEFAULT_CITIES = [
-  'Москва',
-  'Санкт-Петербург'
+DEFAULT_CITIES = %w[
+  Москва
+  Санкт-Петербург
 ].freeze
 
+def cities_from_file(path = File.join(__dir__, 'config', 'cities.yml'))
+  return [] unless File.exist?(path)
+
+  yaml = YAML.load_file(path)
+  Array(yaml['cities']).map { |c| c.to_s.strip }.reject(&:empty?)
+rescue StandardError
+  []
+end
+
+def cities_from_env(value = ENV['CITIES'])
+  return [] if value.nil? || value.strip.empty?
+
+  value.split(',').map { |c| c.to_s.strip }.reject(&:empty?)
+end
+
 def load_cities
-  # 1) Try config file if present
-  path = File.join(__dir__, 'config', 'cities.yml')
-  if File.exist?(path)
-    begin
-      yaml = YAML.load_file(path)
-      cfg_cities = Array(yaml['cities']).map { |c| c.to_s.strip }.reject(&:empty?)
-      return cfg_cities unless cfg_cities.empty?
-    rescue StandardError
-      # ignore
-    end
-  end
+  from_file = cities_from_file
+  return from_file unless from_file.empty?
 
-  # 2) Fallback to ENV CITIES (comma-separated)
-  env = ENV['CITIES']
-  env_cities = if env && !env.strip.empty?
-                  env.split(',').map(&:strip).reject(&:empty?)
-                else
-                  []
-                end
-  return env_cities unless env_cities.empty?
+  from_env = cities_from_env
+  return from_env unless from_env.empty?
 
-  # 3) Finally, built-in defaults
   DEFAULT_CITIES
 end
 

@@ -1,4 +1,6 @@
 class WeatherKey
+  TIME_SLOT_SECONDS = ENV.fetch('TIME_SLOT_SECONDS', 20 * 60).to_i
+
   # Build day-level key per city. Values are time-slot -> data for that day.
   def self.key_for(city:, at:)
     rounded = round_to_slot(at)
@@ -11,7 +13,7 @@ class WeatherKey
   end
 
   def self.round_to_slot(at)
-    Time.at((at.to_i / (20 * 60)) * 20 * 60)
+    Time.at((at.to_i / TIME_SLOT_SECONDS) * TIME_SLOT_SECONDS)
   end
   private_class_method :round_to_slot
 end

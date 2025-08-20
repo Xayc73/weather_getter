@@ -1,7 +1,4 @@
-default_cities:
+cities:
   - Москва
   - Санкт-Петербург
-
-
-
 

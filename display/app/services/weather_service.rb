@@ -1,5 +1,5 @@
 class WeatherService
-  SLOT_STEP_SECONDS = 20 * 60
+  SLOT_STEP_SECONDS = WeatherKey::TIME_SLOT_SECONDS
 
   def initialize(storage: WeatherStorage.new, time_source: -> { Time.now })
     @storage = storage

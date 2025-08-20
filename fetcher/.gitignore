@@ -2,3 +2,6 @@
 /.env*
 
 coverage
+
+config/cities.yml
+config/fetcher.yml

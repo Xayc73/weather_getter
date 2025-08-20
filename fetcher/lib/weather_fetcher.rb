@@ -7,6 +7,8 @@ require_relative 'weather/coordinates_resolver'
 require_relative 'weather/city_coordinates'
 
 class WeatherFetcher
+  TIME_SLOT_SECONDS = ENV.fetch('TIME_SLOT_SECONDS', 20 * 60).to_i
+
   def initialize(cities:, provider:, storage:)
     @cities = cities
     @provider = provider
@@ -22,7 +24,7 @@ class WeatherFetcher
     delay_seconds = seconds_until_next_boundary(now)
     scheduler.in "#{delay_seconds}s" do
       fetch_and_store
-      scheduler.every '20m' do
+      scheduler.every "#{TIME_SLOT_SECONDS}s" do
         fetch_and_store
       end
     end
@@ -48,7 +50,7 @@ class WeatherFetcher
   private
 
   def build_time_parts(now)
-    rounded = Time.at((now.to_i / (20 * 60)) * 20 * 60)
+    rounded = Time.at((now.to_i / TIME_SLOT_SECONDS) * TIME_SLOT_SECONDS)
     [rounded.utc.strftime('%Y-%m-%d'), rounded.utc.strftime('%H:%M')]
   end
 
@@ -84,8 +86,8 @@ class WeatherFetcher
   end
 
   def seconds_until_next_boundary(now)
-    slot = (now.to_i / (20 * 60)) * 20 * 60
-    next_slot = slot + 20 * 60
+    slot = (now.to_i / TIME_SLOT_SECONDS) * TIME_SLOT_SECONDS
+    next_slot = slot + TIME_SLOT_SECONDS
     [next_slot - now.to_i, 0].max
   end
 end

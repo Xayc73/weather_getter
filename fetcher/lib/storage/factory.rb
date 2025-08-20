@@ -9,7 +9,7 @@ module Storage
 
       case selected
       when 'nats_kv'
-        nats_url = ENV.fetch('NATS_URL', 'nats://localhost:4222')
+        nats_url = ENV.fetch('NATS_URL', 'nats://nats:4222')
         bucket   = config.dig('storage', 'nats_kv', 'bucket') || 'weather'
         Storage::NatsKvAdapter.new(nats_url: nats_url, bucket: bucket)
       else
